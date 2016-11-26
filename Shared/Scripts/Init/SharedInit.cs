@@ -1,33 +1,18 @@
-using System.Collections.Generic;
+using TimiShared.Loading;
+using TimiShared.Service;
 using UnityEngine;
-using TimiShared.Debug;
 
 namespace TimiShared.Init {
-    public class SharedInit : MonoBehaviour {
+    public class SharedInit : MonoBehaviour, IInitializable {
 
-        [SerializeField] private List<GameObject> _initializables;
-
-        private void Awake() {
-            this.Initialize();
+        #region IInitializable
+        public void StartInitialize() {
+            ServiceLocator.RegisterService<PrefabLoader>(new PrefabLoader());
         }
 
-        private void Initialize() {
-            if (this._initializables != null) {
-                var enumerator = this._initializables.GetEnumerator();
-                while (enumerator.MoveNext()) {
-                    if (enumerator.Current == null) {
-                        TimiDebug.LogErrorColor("Initializable object list has a null object", LogColor.red);
-                        continue;
-                    }
-                    IInitializable initializable = enumerator.Current.GetComponent<IInitializable>();
-                    if (initializable != null) {
-                        initializable.StartInitialize();
-                    } else {
-                        TimiDebug.LogErrorColor(enumerator.Current.name + " has no " + typeof(IInitializable).Name, LogColor.red);
-                    }
-                }
-            }
+        public bool IsFullyInitialized() {
+            return false;
         }
-
+        #endregion
     }
 }

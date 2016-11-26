@@ -3,9 +3,7 @@ using TimiShared.Extensions;
 
 namespace TimiShared.Debug {
     public class LogColor {
-        private string _colorName;
         private LogColor(string colorName) {
-            this._colorName = colorName;
             this._prefix = "<color=" + colorName + ">";
         }
 
