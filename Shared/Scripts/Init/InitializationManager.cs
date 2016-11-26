@@ -1,31 +1,35 @@
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TimiShared.Debug;
+using UnityEngine;
 
 namespace TimiShared.Init {
     public class InitializationManager : MonoBehaviour {
 
-        [SerializeField] private List<GameObject> _initializables;
+        [SerializeField] private List<UnityEngine.Object> _initializables;
 
         private void Awake() {
-            this.Initialize();
+            this.StartCoroutine(this.SerialInitialize());
         }
 
-        private void Initialize() {
-            if (this._initializables != null) {
-                var enumerator = this._initializables.GetEnumerator();
-                while (enumerator.MoveNext()) {
-                    if (enumerator.Current == null) {
-                        TimiDebug.LogErrorColor("Initializable object list has a null object", LogColor.red);
-                        continue;
-                    }
-                    IInitializable initializable = enumerator.Current.GetComponent<IInitializable>();
-                    if (initializable != null) {
-                        TimiDebug.LogColor("Initializing " + enumerator.Current.name, LogColor.green);
-                        initializable.StartInitialize();
-                    } else {
-                        TimiDebug.LogErrorColor(enumerator.Current.name + " has no " + typeof(IInitializable).Name, LogColor.red);
-                    }
+        private IEnumerator SerialInitialize() {
+            if (this._initializables == null || this._initializables.Count == 0) {
+                yield break;
+            }
+            var enumerator = this._initializables.GetEnumerator();
+            while (enumerator.MoveNext()) {
+                IInitializable initializable = enumerator.Current as IInitializable;
+                if (initializable == null) {
+                    GameObject asGO = enumerator.Current as GameObject;
+                    initializable = asGO.GetComponent<IInitializable>();
+                }
+                if (initializable == null) {
+                    TimiDebug.LogErrorColor("Unable to convert " + enumerator.Current.name + " to " + typeof(IInitializable).Name, LogColor.red);
+                    continue;
+                }
+                initializable.StartInitialize();
+                while (!initializable.IsFullyInitialized) {
+                    yield return null;
                 }
             }
         }

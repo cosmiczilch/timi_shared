@@ -15,10 +15,11 @@ namespace TimiShared.Init {
             } else {
                 TimiDebug.LogErrorColor("No prefab loader configured", LogColor.red);
             }
+            this.IsFullyInitialized = true;
         }
 
-        public bool IsFullyInitialized() {
-            return false;
+        public bool IsFullyInitialized {
+            get; private set;
         }
         #endregion
     }
