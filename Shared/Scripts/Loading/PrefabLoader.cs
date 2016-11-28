@@ -15,17 +15,21 @@ namespace TimiShared.Loading {
         }
 
         #region Public API
-        public GameObject InstantiateSynchronous(string path, Transform parent) {
+        public GameObject InstantiateSynchronous(string path, Transform parent = null) {
             Object prefab = this.LoadPrefabSynchronous(path);
             GameObject instance = Instantiate(prefab) as GameObject;
-            instance.transform.SetParent(parent, worldPositionStays: false);
+            if (parent != null) {
+                instance.transform.SetParent(parent, worldPositionStays: false);
+            }
             return instance;
         }
 
-        public void InstantiateAsynchronous(string path, Transform parent, System.Action<GameObject> callback) {
+        public void InstantiateAsynchronous(string path, Transform parent = null, System.Action<GameObject> callback = null) {
             this.LoadPrefabAsync(path, (Object prefab) => {
                 GameObject instance = Instantiate(prefab) as GameObject;
-                instance.transform.SetParent(parent, worldPositionStays: false);
+                if (parent != null) {
+                    instance.transform.SetParent(parent, worldPositionStays: false);
+                }
                 if (callback != null) {
                     callback.Invoke(instance);
                 }
