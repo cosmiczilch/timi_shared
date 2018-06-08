@@ -16,6 +16,7 @@ namespace TimiShared.Service {
                 return service as T;
             }
             TimiDebug.LogWarningColor("No service registered for type " + typeof(T).Name, LogColor.red);
+            // TODO: currently this does not work for services that are monobehaviours
             service = new T() as IService;
             ServiceLocator.RegisterService<T>(service);
             return service as T;
