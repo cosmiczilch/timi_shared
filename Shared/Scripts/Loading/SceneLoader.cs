@@ -16,23 +16,37 @@ namespace TimiShared.Loading {
         }
 
         #region Public API
-        public void LoadSceneAsync(string sceneName, LoadSceneMode mode, System.Action<bool> callback) {
+        public void LoadSceneAsync(string sceneName, LoadSceneMode mode, System.Action<string, bool> callback) {
             this.StartCoroutine(this.LoadSceneAsyncInternal(sceneName, mode, callback));
+        }
+
+        public void LoadSceneSync(string sceneName, LoadSceneMode mode) {
+            if (!this.CanLoadScene(sceneName)) {
+                TimiDebug.LogErrorColor("Scene name not set", LogColor.red);
+                return;
+            }
+            SceneManager.LoadScene(sceneName, mode);
         }
         #endregion
 
-        private IEnumerator LoadSceneAsyncInternal(string sceneName, LoadSceneMode mode, System.Action<bool> callback) {
+        private bool CanLoadScene(string sceneName) {
             if (string.IsNullOrEmpty(sceneName)) {
-                TimiDebug.LogErrorColor("Scene name not set", LogColor.red);
-                callback.Invoke(false);
-                yield break;
+                return false;
             }
+            return true;
+        }
 
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
-            while (!asyncOperation.isDone) {
-                yield return null;
+        private IEnumerator LoadSceneAsyncInternal(string sceneName, LoadSceneMode mode, System.Action<string, bool> callback) {
+            AsyncOperation asyncOperation = this.CanLoadScene(sceneName) ? SceneManager.LoadSceneAsync(sceneName, mode) : null;
+            if (asyncOperation != null) {
+                while (!asyncOperation.isDone) {
+                    yield return null;
+                }
+                callback.Invoke(sceneName, true);
+            } else {
+                TimiDebug.LogErrorColor("Could not load scene: " + sceneName, LogColor.red);
+                callback.Invoke(sceneName, false);
             }
-            callback.Invoke(true);
         }
 
     }

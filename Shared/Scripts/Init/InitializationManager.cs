@@ -8,6 +8,8 @@ namespace TimiShared.Init {
 
         [SerializeField] private List<UnityEngine.Object> _initializables;
 
+        private static float MAX_TIMEOUT_IN_SECONDS = 4;
+
         private void Awake() {
             this.StartCoroutine(this.SerialInitialize());
         }
@@ -16,6 +18,8 @@ namespace TimiShared.Init {
             if (this._initializables == null || this._initializables.Count == 0) {
                 yield break;
             }
+
+            float startTimeInSeconds = Time.fixedTime;
             var enumerator = this._initializables.GetEnumerator();
             while (enumerator.MoveNext()) {
                 IInitializable initializable = enumerator.Current as IInitializable;
@@ -29,9 +33,14 @@ namespace TimiShared.Init {
                 }
                 initializable.StartInitialize();
                 while (!initializable.IsFullyInitialized) {
+                    if ((Time.fixedTime - startTimeInSeconds) > MAX_TIMEOUT_IN_SECONDS) {
+                        TimiDebug.LogErrorColor("Initialization timed out", LogColor.red);
+                        yield break;
+                    }
                     yield return null;
                 }
             }
+            TimiDebug.LogColor("Initialization complete", LogColor.green);
         }
 
     }
