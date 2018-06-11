@@ -12,6 +12,9 @@ namespace TimiShared.Init {
         #region IInitializable
         public void StartInitialize() {
 
+            // Make sure the protobuf library can de/serialize custom data types
+            ProtobufInit.RegisterCustomTypes();
+
             // Register PrefabLoader
             if (this._prefabloader != null) {
                 ServiceLocator.RegisterService<PrefabLoader>(this._prefabloader);
@@ -25,10 +28,13 @@ namespace TimiShared.Init {
             } else {
                 TimiDebug.LogErrorColor("No scene loader configured", LogColor.red);
             }
-            this.IsFullyInitialized = true;
 
-            // Make sure the protobuf library can de/serialize custom data types
-            ProtobufInit.RegisterCustomTypes();
+            // Register SharedDataModel
+            SharedDataModel sharedDataModel = new SharedDataModel();
+            sharedDataModel.LoadData();
+            ServiceLocator.RegisterService<SharedDataModel>(sharedDataModel);
+
+            this.IsFullyInitialized = true;
         }
 
         public bool IsFullyInitialized {
