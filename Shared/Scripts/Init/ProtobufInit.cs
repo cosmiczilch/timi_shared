@@ -2,20 +2,9 @@
 using UnityEngine;
 
 namespace TimiShared.Init {
-    public class ProtobufInit : MonoBehaviour, IInitializable {
+    public static class ProtobufInit {
 
-        #region IInitializable
-        public void StartInitialize() {
-            this.RegisterCustomTypes();
-            this.IsFullyInitialized = true;
-        }
-
-        public bool IsFullyInitialized {
-            get; private set;
-        }
-        #endregion
-
-        private void RegisterCustomTypes() {
+        public static void RegisterCustomTypes() {
             // Add vector2 de/serialization support:
             if (!ProtoBuf.Meta.RuntimeTypeModel.Default.IsDefined(typeof(Vector2))) {
                 MetaType metaType = ProtoBuf.Meta.RuntimeTypeModel.Default.Add(typeof(Vector2), applyDefaultBehaviour: false);
