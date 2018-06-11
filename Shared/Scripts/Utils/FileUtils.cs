@@ -9,7 +9,8 @@ namespace TimiShared.Utils {
                 TimiDebug.LogErrorColor("File path empty", LogColor.grey);
                 return null;
             }
-            if (!File.Exists(filePath)) {
+            if ((openMode != FileMode.Create && openMode != FileMode.CreateNew && openMode != FileMode.OpenOrCreate) &&
+                !File.Exists(filePath)) {
                 TimiDebug.LogErrorColor("No such file:" + filePath, LogColor.grey);
                 return null;
             }
