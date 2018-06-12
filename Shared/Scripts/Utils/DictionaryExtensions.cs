@@ -10,6 +10,14 @@ namespace TimiShared.Extensions {
             dictionary.Add(key, value);
             return value;
         }
-
+        
+        
+        public static TValue GetOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key) {
+            TValue value;
+            if (dictionary.TryGetValue(key, out value)) {
+                return value;
+            }
+            return default(TValue);
+        }
     }
 }
