@@ -8,6 +8,7 @@ namespace TimiShared.Init {
 
         [SerializeField] private PrefabLoader _prefabloader;
         [SerializeField] private SceneLoader _sceneLoader;
+        [SerializeField] private AssetLoader _assetLoader;
 
         #region IInitializable
         public void StartInitialize() {
@@ -20,6 +21,7 @@ namespace TimiShared.Init {
                 ServiceLocator.RegisterService<PrefabLoader>(this._prefabloader);
             } else {
                 TimiDebug.LogErrorColor("No prefab loader configured", LogColor.red);
+                return;
             }
 
             // Register SceneLoader
@@ -27,6 +29,15 @@ namespace TimiShared.Init {
                 ServiceLocator.RegisterService<SceneLoader>(this._sceneLoader);
             } else {
                 TimiDebug.LogErrorColor("No scene loader configured", LogColor.red);
+                return;
+            }
+
+            // Register AssetLoader
+            if (this._assetLoader != null) {
+                ServiceLocator.RegisterService<AssetLoader>(this._assetLoader);
+            } else {
+                TimiDebug.LogErrorColor("No asset loader configured", LogColor.red);
+                return;
             }
 
             // Register SharedDataModel
