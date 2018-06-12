@@ -9,11 +9,12 @@ namespace TimiShared.Init {
     public class InitializableGroup : MonoBehaviour, IInitializable {
 
         [SerializeField] private string _groupName;
+        [SerializeField] private bool _serialLoad = false;
         [SerializeField] private List<GameObject> _initializableObjects;
 
         #region IInitializable
         public void StartInitialize() {
-            this.InitializeGroup();
+            this.StartCoroutine(this.InitializeGroup());
             this.StartCoroutine(this.WaitForGroupToFinishInitializing());
         }
 
@@ -22,9 +23,9 @@ namespace TimiShared.Init {
         }
         #endregion
 
-        private void InitializeGroup() {
+        private IEnumerator InitializeGroup() {
             if (this._initializableObjects == null) {
-                return;
+                yield break;
             }
 
             var enumerator = this._initializableObjects.GetEnumerator();
@@ -40,6 +41,12 @@ namespace TimiShared.Init {
                 }
                 TimiDebug.LogColor("Initializing " + enumerator.Current.name, LogColor.green);
                 initializable.StartInitialize();
+
+                if (this._serialLoad) {
+                    while (!initializable.IsFullyInitialized) {
+                        yield return null;
+                    }
+                }
             }
         }
 
