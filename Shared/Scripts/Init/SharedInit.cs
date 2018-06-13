@@ -1,3 +1,4 @@
+using System.Collections;
 using TimiShared.Debug;
 using TimiShared.Loading;
 using TimiShared.Service;
@@ -9,6 +10,7 @@ namespace TimiShared.Init {
         [SerializeField] private PrefabLoader _prefabloader;
         [SerializeField] private SceneLoader _sceneLoader;
         [SerializeField] private AssetLoader _assetLoader;
+        [SerializeField] private SharedDataModel _sharedDataModel;
 
         #region IInitializable
         public void StartInitialize() {
@@ -40,12 +42,7 @@ namespace TimiShared.Init {
                 return;
             }
 
-            // Register SharedDataModel
-            SharedDataModel sharedDataModel = new SharedDataModel();
-            sharedDataModel.LoadData();
-            ServiceLocator.RegisterService<SharedDataModel>(sharedDataModel);
-
-            this.IsFullyInitialized = true;
+            this.StartCoroutine(this.LoadDataModels());
         }
 
         public bool IsFullyInitialized {
@@ -58,5 +55,19 @@ namespace TimiShared.Init {
             }
         }
         #endregion
+
+        private IEnumerator LoadDataModels() {
+            // Register SharedDataModel
+            if (this._sharedDataModel == null) {
+                TimiDebug.LogErrorColor("No shared data model configured", LogColor.red);
+                yield break;
+            }
+            yield return this._sharedDataModel.LoadDataAsync();
+            ServiceLocator.RegisterService<SharedDataModel>(this._sharedDataModel);
+
+            // Add more data models here
+
+            this.IsFullyInitialized = true;
+        }
     }
 }

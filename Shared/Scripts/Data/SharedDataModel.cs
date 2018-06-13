@@ -1,6 +1,7 @@
-﻿using TimiShared.Service;
+﻿using System;
+using TimiShared.Service;
 
-public class SharedDataModel : IService {
+public class SharedDataModel : DataModelBase, IService {
 
     public static SharedDataModel Instance {
         get {
@@ -8,11 +9,21 @@ public class SharedDataModel : IService {
         }
     }
 
-    #region Data
-    // Nothing here yet
+    #region DataModelBase
+    protected override string GetDataModelRootPath {
+        get {
+            return "SharedDataModels/";
+        }
+    }
+
+    protected override Type[] DataModelTypes {
+        get {
+            return this._dataModelTypes;
+        }
+    }
     #endregion
 
-    public void LoadData() {
-        // No data to load yet
-    }
+    private Type[] _dataModelTypes = {
+        // Add data types here
+    };
 }
