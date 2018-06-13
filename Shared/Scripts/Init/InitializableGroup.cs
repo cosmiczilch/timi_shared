@@ -21,6 +21,12 @@ namespace TimiShared.Init {
         public bool IsFullyInitialized {
             get; private set;
         }
+
+        public string GetName {
+            get {
+                return "group " + this._groupName;
+            }
+        }
         #endregion
 
         private IEnumerator InitializeGroup() {

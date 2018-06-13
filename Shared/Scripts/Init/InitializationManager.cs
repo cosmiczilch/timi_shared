@@ -31,10 +31,12 @@ namespace TimiShared.Init {
                     TimiDebug.LogErrorColor("Unable to convert " + enumerator.Current.name + " to " + typeof(IInitializable).Name, LogColor.red);
                     continue;
                 }
+
+                TimiDebug.LogColor("Initializing " + initializable.GetName, LogColor.green);
                 initializable.StartInitialize();
                 while (!initializable.IsFullyInitialized) {
                     if ((Time.fixedTime - startTimeInSeconds) > MAX_TIMEOUT_IN_SECONDS) {
-                        TimiDebug.LogErrorColor("Initialization timed out", LogColor.red);
+                        TimiDebug.LogErrorColor("Initialization timed out waiting for: " + initializable.GetName, LogColor.red);
                         yield break;
                     }
                     yield return null;
