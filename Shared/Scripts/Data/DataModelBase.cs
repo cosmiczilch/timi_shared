@@ -37,8 +37,9 @@ public abstract class DataModelBase : MonoBehaviour {
 
         for (int i = 0; i < this.DataModelTypes.Length; ++i) {
             string filePath = Path.Combine(this.GetDataModelRootPath, this.DataModelTypes[i].ToString() + APPDATAMODEL_EXTENSION);
+            int i_copy = i;
             AssetLoader.Instance.GetStreamFromStreamingAssets(filePath, (Stream stream) => {
-                this.OnStreamLoaded(stream, this.DataModelTypes[i]);
+                this.OnStreamLoaded(stream, this.DataModelTypes[i_copy]);
             });
         }
 
