@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace TimiShared.Debug {
 
@@ -36,5 +38,17 @@ namespace TimiShared.Debug {
             message = color.Prefix + message + color.Postfix;
             TimiDebug.LogError(message);
         }
+
+        [Conditional("TIMI_DEBUG")]
+        public static void PrintCodePosition(LogColor logColor) {
+            StackFrame stackFrame = new System.Diagnostics.StackFrame(1, true);
+            string message = "-> { " + stackFrame.GetMethod().ToString() + " }";
+            string[] filePath = stackFrame.GetFileName().Split('/');
+            message += " in " + filePath[filePath.Length - 1]; // Append the file name
+            message += "::" + stackFrame.GetFileLineNumber().ToString();
+            TimiDebug.LogColor(message, logColor);
+            return;
+        }
+
     }
 }
