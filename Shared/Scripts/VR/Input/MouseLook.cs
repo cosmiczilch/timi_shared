@@ -24,7 +24,6 @@ public class MouseLook : MonoBehaviour
             this.transform.localRotation = Quaternion.identity;
 
         } else if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
-            TimiDebug.PrintCodePosition(LogColor.green);
 
             float x_delta = (currentMousePosition.x - this._previousMousePosition.x) / this._screenWidth;
             float y_delta = (currentMousePosition.y - this._previousMousePosition.y) / this._screenHeight;

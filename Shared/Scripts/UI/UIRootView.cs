@@ -1,8 +1,10 @@
-using TimiShared.Init;
+using System.Diagnostics;
+using TimiShared.Debug;
+using TimiShared.Loading;
 using UnityEngine;
 
 namespace TimiShared.UI {
-    public class UIRootView : MonoBehaviour, IInitializable {
+    public class UIRootView : MonoBehaviour {
 
         #region Singleton
         private static UIRootView _instance;
@@ -13,36 +15,40 @@ namespace TimiShared.UI {
         }
         #endregion
 
-        #region Properties
         [SerializeField] private Canvas _mainCanvas;
         public Canvas MainCanvas {
             get {
                 return this._mainCanvas;
             }
         }
-        #endregion
 
-        #region IInitializable
-        public void StartInitialize() {
-            // Nothing to do
-        }
-
-        public bool IsFullyInitialized {
-            get; private set;
-        }
-
-        public string GetName {
+        [SerializeField] private Camera _uiCamera;
+        public Camera UICamera {
             get {
-                return this.GetType().Name;
+                return this._uiCamera;
             }
         }
-        #endregion
+
+        [SerializeField] private string _debugHUDViewPrefabPath;
 
         #region Unity LifeCycle
         private void Awake() {
+            if (UIRootView.Instance != null) {
+                TimiDebug.LogWarningColor("There should never be more than one UIRootView in the scene!", LogColor.orange);
+            }
             UIRootView._instance = this;
-            this.IsFullyInitialized = true;
+
+            this.SetupDebugHUDView();
         }
         #endregion
+
+        [Conditional("TIMI_DEBUG")]
+        private void SetupDebugHUDView() {
+            if (string.IsNullOrEmpty(this._debugHUDViewPrefabPath)) {
+                TimiDebug.LogWarningColor("Debug hud view prefab path not set", LogColor.orange);
+                return;
+            }
+            PrefabLoader.Instance.InstantiateAsynchronous(this._debugHUDViewPrefabPath, this.MainCanvas.transform);
+        }
     }
 }
