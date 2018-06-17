@@ -1,4 +1,5 @@
 ﻿using TimiShared.Debug;
+using TimiShared.Utils;
 using UnityEngine;
 
 public class DebugHUDView : MonoBehaviour {
@@ -28,7 +29,7 @@ public class DebugHUDView : MonoBehaviour {
 
         if (this._isEnabled) {
             // TODO: Use the average fps over the last 60 readings or something
-            this._fpsCounterTextMesh.text = ((int)(1.0f / Time.deltaTime)).ToString();
+            this._fpsCounterTextMesh.text = ((int)FpsMonitor.Instance.AverageFPS).ToString();
         }
     }
 }
